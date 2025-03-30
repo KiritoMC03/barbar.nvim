@@ -200,6 +200,7 @@ local DEPRECATED_OPTIONS = {
 --- @class barbar.config.options
 --- @field animation boolean
 --- @field auto_hide integer
+--- @field enable_preview boolean
 --- @field clickable boolean
 --- @field exclude_ft string[]
 --- @field exclude_name string[]
@@ -325,6 +326,7 @@ function config.setup(options)
   config.options = tbl_deep_extend('keep', options, {
     animation = true,
     auto_hide = -1,
+    enable_preview = false,
     clickable = true,
     exclude_ft = {},
     exclude_name = {},

@@ -194,8 +194,17 @@ function events.enable()
         buf_set_var(tbl.buf, 'checked', is_modified)
         render.update()
       end
+      if is_modified then
+        buf_set_var(tbl.buf, 'is_ever_modified', true)
+      end
     end,
     group = augroup_render,
+  })
+
+  create_autocmd({'BufAdd'}, {
+    callback = function (tbl)
+      buf_set_var(tbl.buf, 'is_ever_modified', false)
+    end
   })
 
   create_autocmd({'BufEnter', 'BufNew'}, {

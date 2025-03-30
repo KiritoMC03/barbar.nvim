@@ -23,6 +23,7 @@
 -- For the full copy of the GNU Affero General Public License see:
 -- http://www.gnu.org/licenses.
 
+local table_insert = table.insert
 local buf_get_option = vim.api.nvim_buf_get_option --- @type function
 local buf_set_option = vim.api.nvim_buf_set_option --- @type function
 local buflisted = vim.fn.buflisted --- @type function
@@ -41,6 +42,8 @@ local win_get_buf = vim.api.nvim_win_get_buf --- @type function
 local win_is_valid = vim.api.nvim_win_is_valid --- @type function
 
 local state = require('barbar.state')
+local buffer = require('barbar.buffer')
+local config = require('barbar.config')
 local markdown_inline_code = require('barbar.utils').markdown_inline_code
 
 -------------------
@@ -224,6 +227,32 @@ end
 --- @return nil
 function bbye.bwipeout(force, buffer, mods)
   bbye.delete('bwipeout', force, buffer, mods)
+end
+
+--- Remove preview tab
+--- @param buffers integer[]
+--- @return integer[] buffers
+function bbye.delete_previews(buffers)
+  if config.options.enable_preview then
+    local win_id = vim.api.nvim_get_current_win()
+    local is_floating = vim.api.nvim_win_get_config(win_id).relative ~= ""
+
+    if is_floating then
+      return buffers
+    end
+
+    local not_previews = {}
+    for _, buffer_number in ipairs(buffers) do
+      if buffer.is_ever_modified(buffer_number) or buffer.get_activity(buffer_number) == buffer.activities.Current then
+        table_insert(not_previews, buffer_number)
+      else
+        bbye.bdelete(false, buffer_number)
+      end
+    end
+    buffers = not_previews
+  end
+
+  return buffers
 end
 
 return bbye

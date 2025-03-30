@@ -6,6 +6,7 @@ local rshift = bit.rshift
 
 local buf_get_name = vim.api.nvim_buf_get_name --- @type function
 local buf_get_option = vim.api.nvim_buf_get_option --- @type function
+local buf_get_var = vim.api.nvim_buf_get_var --- @type function
 local buf_is_valid = vim.api.nvim_buf_is_valid --- @type function
 local bufnr = vim.fn.bufnr --- @type function
 local bufwinnr = vim.fn.bufwinnr --- @type function
@@ -156,6 +157,17 @@ function buffer.get_unique_names(buffer_numbers)
   until list.is_unique(computed_names) or depth > 10
 
   return computed_names
+end
+
+--- Determines if the buffer from the list has ever been modified since it was opened
+--- @param buffer_number integer
+--- @return boolean is_ever_modified
+function buffer.is_ever_modified(buffer_number)
+  local ok, is_ever_modified = pcall(buf_get_var, buffer_number, 'is_ever_modified')
+  if not ok then
+    return false -- looks better as the default behavior, because if there are problems, we will have a buffer in the 'normal' state
+  end
+  return is_ever_modified
 end
 
 return buffer

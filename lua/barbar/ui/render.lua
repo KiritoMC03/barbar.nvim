@@ -32,6 +32,7 @@ local layout = require('barbar.ui.layout')
 local nodes = require('barbar.ui.nodes')
 local notify = require('barbar.utils').notify
 local state = require('barbar.state')
+local bbye = require('barbar.bbye')
 local ANIMATION = require('barbar.constants').ANIMATION
 
 -- Digits for optional styling of buffer_number and buffer_index.
@@ -533,6 +534,7 @@ function render.update(update_names, refocus)
   end
 
   local buffers = layout.hide(state, state.get_updated_buffers(update_names))
+  buffers = bbye.delete_previews(buffers)
 
   -- Auto hide/show if applicable
   if config.options.auto_hide > -1 then
